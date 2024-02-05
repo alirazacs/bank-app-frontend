@@ -17,8 +17,8 @@
         public DateTime DOB { get; set; } // Change DateOnly to DateTime
         public AccountType AccountType { get; set; }
         public AccountStatus AccountStatus { get; set; } = AccountStatus.PENDING;
-        public long TellerId { get; set; }
-        public Teller Teller { get; set; } // Assuming TellerViewModel is another ViewModel
-        public Customer Customer { get; set; } 
+        public long? TellerId { get; set; }
+        public Teller? Teller { get; set; } // Assuming TellerViewModel is another ViewModel
+        public Customer? Customer { get; set; } 
     }
 }

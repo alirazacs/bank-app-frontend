@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using bank;
+using Models;
 
 namespace Services
 {
@@ -12,13 +13,13 @@ namespace Services
 
         public async  Task<IEnumerable<Applicant>> GetApplicants()
         {
-            return await _httpClient.GetFromJsonAsync<List<Applicant>>("api/applicant");
+            return await _httpClient.GetFromJsonAsync<List<Applicant>>($"{AppRoutes.SERVER_CONNECTION_STRING}{AppRoutes.GET_ALL_APPLICANTS}");
         }
 
-        public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long tellerId)
+        public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long? tellerId)
         {
             var data = new { applicantId = applicantId, accountStatus= accountStatus,tellerId= tellerId };
-            await _httpClient.PutAsJsonAsync("api/teller/changeStatus",data);
+            await _httpClient.PutAsJsonAsync($"{AppRoutes.SERVER_CONNECTION_STRING}{AppRoutes.CHANGE_TELLER_STATUS}", data);
         }
 
 

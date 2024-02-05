@@ -59,7 +59,7 @@ else
         Console.WriteLine("jkdjfdsjkfjkdkjfjksdf");
         
     }
-    public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long tellerId)
+    public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long? tellerId)
     {
         await this._httpClientService.UpdateApplicantStatus(applicantId, accountStatus, tellerId);
     }
