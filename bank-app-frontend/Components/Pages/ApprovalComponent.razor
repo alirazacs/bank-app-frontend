@@ -50,6 +50,7 @@ else
     {
         await base.OnInitializedAsync();
         applicantsList = await _httpClientService.GetApplicants();
+        //todo : both rejected and approved applicants should not show.
         applicantsList = applicantsList.Where(app => app.AccountStatus != AccountStatus.APPROVED).Select(app => app);
     }
 
