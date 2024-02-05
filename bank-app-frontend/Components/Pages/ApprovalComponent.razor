@@ -2,7 +2,7 @@
 @using Models
 @using Services
 @inject HttpClientService _httpClientService
-
+@rendermode InteractiveServer
 <h3 class="text-center">Account Opening Requests</h3>
 @if (applicantsList == null)
 {
@@ -32,8 +32,8 @@ else
                     <td>@applicant.CNIC</td>
                     <td>@applicant.AccountType</td>
                     <td class="text-center">
-                    <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,applicant.AccountStatus,applicant.TellerId)" class="btn btn-success">Approve</button>
-                    <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,applicant.AccountStatus,applicant.TellerId)" class="btn btn-danger">Reject</button>
+                    <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.APPROVED,1)" class="btn btn-success">Approve</button>
+                    <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.DENIED,1)" class="btn btn-danger">Reject</button>
                     </td>
                 </tr>
             }
@@ -52,12 +52,15 @@ else
         applicantsList = await _httpClientService.GetApplicants();
         //todo : both rejected and approved applicants should not show.
         applicantsList = applicantsList.Where(app => app.AccountStatus != AccountStatus.APPROVED).Select(app => app);
+        Console.WriteLine(applicantsList);
     }
 
-    public void testfunction()
+    public void testfunction(string parameter)
     {
+
         Console.WriteLine("jkdjfdsjkfjkdkjfjksdf");
-        
+        string url = parameter + "ABC";
+
     }
     public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long? tellerId)
     {
