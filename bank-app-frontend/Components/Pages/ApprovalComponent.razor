@@ -1,6 +1,16 @@
 ﻿@page "/approval"
 @using Models
-<h3 class="text-center">Teller Approval Component</h3>
+@using Services
+@inject HttpClientService _httpClientService
+
+<h3 class="text-center">Account Opening Requests</h3>
+@if (applicantsList == null)
+{
+    <h4>Loading...</h4>
+}
+else
+{
+    
 <div class="p-4 m-4">
     <table class="table table-bordered table-striped">
         <thead>
@@ -9,10 +19,11 @@
                 <th class="col-2">Name</th>
                 <th class="col-2">CNIC</th>
                 <th class="col-2">Account Type</th>
-                <th class="col-2"></th>
+                <th class="col-2">Operation</th>
             </tr>
         </thead>
-        <tbody>
+           
+            <tbody>
             @foreach (var applicant in applicantsList)
             {
                 <tr>
@@ -21,50 +32,35 @@
                     <td>@applicant.CNIC</td>
                     <td>@applicant.AccountType</td>
                     <td class="text-center">
-                        <button type="button" class="btn btn-success">Approve</button>
-                        <button type="button" class="btn btn-danger">Reject</button>
+                    <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,applicant.AccountStatus,applicant.TellerId)" class="btn btn-success">Approve</button>
+                    <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,applicant.AccountStatus,applicant.TellerId)" class="btn btn-danger">Reject</button>
                     </td>
                 </tr>
             }
         </tbody>
+        
     </table>
 </div>
+}
 
 
 @code {
-
-    List<Applicant> applicantsList = new List<Applicant>();
-    protected override void OnInitialized()
+    IEnumerable<Applicant> applicantsList = null;
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
+        applicantsList = await _httpClientService.GetApplicants();
+        applicantsList = applicantsList.Where(app => app.AccountStatus != AccountStatus.APPROVED).Select(app => app);
+    }
 
-        // Create and add the applicant1 object to the applicantsList
-        applicantsList.Add(new Applicant
-            {
-                Id = 1,
-                ApplicateName = "John Doe",
-                Address = "123 Main St",
-                CNIC = "1234567890",
-                DOB = new DateTime(1990, 1, 1),
-                AccountType = AccountType.SAVING,
-                AccountStatus = AccountStatus.PENDING,
-                TellerId = 1,
-                Teller = new Teller { Id = 1, Name = "Teller1" },
-                Customer = new Customer { CustomerId = 1, UserName = "user1", Password = "password1" }
-            });
-        applicantsList.Add(new Applicant
-            {
-                Id = 2,
-                ApplicateName = "Jane Doe",
-                Address = "456 Oak St",
-                CNIC = "0987654321",
-                DOB = new DateTime(1985, 5, 15),
-                AccountType = AccountType.CURRENT,
-                AccountStatus = AccountStatus.APPROVED,
-                TellerId = 2,
-                Teller = new Teller { Id = 2, Name = "Teller2" },
-                Customer = new Customer { CustomerId = 2, UserName = "user2", Password = "password2" }
-            });
+    public void testfunction()
+    {
+        Console.WriteLine("jkdjfdsjkfjkdkjfjksdf");
+        
+    }
+    public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long tellerId)
+    {
+        await this._httpClientService.UpdateApplicantStatus(applicantId, accountStatus, tellerId);
     }
 
 }
