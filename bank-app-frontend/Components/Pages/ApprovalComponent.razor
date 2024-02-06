@@ -5,52 +5,72 @@
 @inject ApplicantService applicantService;
 @rendermode InteractiveServer
 <h3 class="text-center">Account Opening Requests</h3>
-@if (applicantsList == null)
+@if (isApplicantsListLoading)
 {
-    <h4>Loading...</h4>
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
 }
-else if(applicantsList.Count() == 0)
+else if (applicantsList.Count() == 0)
 {
     <h6 class="text-center">No pending applicant available</h6>
 }
 else
 {
-    
-<div class="p-4 m-4">
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th class="col-1">Id</th>
-                <th class="col-2">Name</th>
-                <th class="col-2">CNIC</th>
-                <th class="col-2">Account Type</th>
-                <th class="col-2">Operation</th>
-            </tr>
-        </thead>
-           
-            <tbody>
-            @foreach (var applicant in applicantsList)
-            {
+    if (isApplicantStatusCallLoading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only"></span>
+            </div>
+        </div>
+    }
+
+    <div class="p-4 m-4">
+        <table class="table table-bordered table-striped">
+            <thead>
                 <tr>
-                    <td>@applicant.Id</td>
-                    <td>@applicant.ApplicateName</td>
-                    <td>@applicant.CNIC</td>
-                    <td>@applicant.AccountType</td>
-                    <td class="text-center">
-                    <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.APPROVED,1)" class="btn btn-success">Approve</button>
-                    <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.DENIED,1)" class="btn btn-danger">Reject</button>
-                    </td>
+                    <th class="col-1">Id</th>
+                    <th class="col-2">Name</th>
+                    <th class="col-2">CNIC</th>
+                    <th class="col-2">Account Type</th>
+                    <th class="col-2">Operation</th>
                 </tr>
-            }
-        </tbody>
-        
-    </table>
-</div>
+            </thead>
+
+            <tbody>
+                @foreach (var applicant in applicantsList)
+                {
+                    <tr>
+                        <td>@applicant.Id</td>
+                        <td>@applicant.ApplicateName</td>
+                        <td>@applicant.CNIC</td>
+                        <td>@applicant.AccountType</td>
+                        <td class="text-center">
+                            <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.APPROVED,1)"
+                                    class="btn btn-success @(isApplicantStatusCallLoading ? "disabled" : "")">
+                                Approve
+                            </button>
+                            <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.DENIED,1)"
+                                    class="btn btn-danger @(isApplicantStatusCallLoading ? "disabled" : "")">
+                                Reject
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
 }
 
 
 @code {
     IEnumerable<Applicant> applicantsList = null;
+    bool isApplicantsListLoading = false;
+    bool isApplicantStatusCallLoading = false;
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -59,15 +79,18 @@ else
 
     private async Task getPendingApplicantsList()
     {
+        isApplicantsListLoading = true;
         applicantsList = await applicantService.GetApplicantsList();
         applicantsList = applicantsList.Where(app => app.AccountStatus.Equals(AccountStatus.PENDING)).Select(app => app);
-        Console.WriteLine(applicantsList);
+        isApplicantsListLoading = false;
     }
 
-    public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long tellerId)
+    public async Task UpdateApplicantStatus(long applicantId, AccountStatus accountStatus, long tellerId)
     {
+        isApplicantStatusCallLoading = true;
         await tellerService.UpdateApplicantStatusAsync(applicantId, accountStatus, tellerId);
         await getPendingApplicantsList();
+        isApplicantStatusCallLoading = false;
     }
 
 }
