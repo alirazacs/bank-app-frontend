@@ -54,13 +54,20 @@ else
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        await getPendingApplicantsList();
+    }
+
+    private async Task getPendingApplicantsList()
+    {
         applicantsList = await applicantService.GetApplicantsList();
         applicantsList = applicantsList.Where(app => app.AccountStatus.Equals(AccountStatus.PENDING)).Select(app => app);
+        Console.WriteLine(applicantsList);
     }
 
     public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long tellerId)
     {
         await tellerService.UpdateApplicantStatusAsync(applicantId, accountStatus, tellerId);
+        await getPendingApplicantsList();
     }
 
 }
