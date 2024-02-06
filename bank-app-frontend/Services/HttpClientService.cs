@@ -1,5 +1,8 @@
 ﻿using bank;
 using Models;
+using System.Net.Http;
+using System.Text.Json;
+
 
 namespace Services
 {
@@ -11,17 +14,47 @@ namespace Services
             this._httpClient = httpClient;
         }
 
-        public async  Task<IEnumerable<Applicant>> GetApplicants()
+        public async Task<TResponse> SendGetRequest<TRequest, TResponse>(string endPointUrl)
         {
-            return await _httpClient.GetFromJsonAsync<List<Applicant>>($"{AppRoutes.GET_ALL_APPLICANTS}");
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<TResponse>(endPointUrl);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return default;
         }
 
-        public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long? tellerId)
+        public async Task<TResponse> PostDataRequest<TRequest, TResponse>(string endpoint, TRequest data)
         {
-            var data = new { applicantId = applicantId, accountStatus= (int) accountStatus,tellerId= tellerId };
-            await _httpClient.PutAsJsonAsync($"{AppRoutes.CHANGE_TELLER_STATUS}", data);
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(endpoint, data);
+                return await response.Content.ReadFromJsonAsync<TResponse>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+
+            return default;  
         }
 
-
+        public async Task<TResponse> PutDataRequest <TRequest, TResponse>(string endpoint, TRequest data)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync(endpoint, data);
+                return await response.Content.ReadFromJsonAsync<TResponse>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred: {ex.Message}");
+            }
+            return default;
+        }
     }
 }

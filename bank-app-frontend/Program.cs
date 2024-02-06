@@ -12,6 +12,9 @@ builder.Services.AddHttpClient<HttpClientService>(client =>
     client.BaseAddress = new Uri(AppRoutes.SERVER_CONNECTION_STRING);
 });
 
+builder.Services.AddSingleton<ApplicantService>();
+builder.Services.AddSingleton<TellerService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

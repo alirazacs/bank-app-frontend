@@ -1,12 +1,17 @@
 ﻿@page "/approval"
 @using Models
 @using Services
-@inject HttpClientService _httpClientService
+@inject TellerService tellerService;
+@inject ApplicantService applicantService;
 @rendermode InteractiveServer
 <h3 class="text-center">Account Opening Requests</h3>
 @if (applicantsList == null)
 {
     <h4>Loading...</h4>
+}
+else if(applicantsList.Count() == 0)
+{
+    <h6 class="text-center">No pending applicant available</h6>
 }
 else
 {
@@ -49,22 +54,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        applicantsList = await _httpClientService.GetApplicants();
-        //todo : both rejected and approved applicants should not show.
-        applicantsList = applicantsList.Where(app => app.AccountStatus != AccountStatus.APPROVED).Select(app => app);
-        Console.WriteLine(applicantsList);
+        applicantsList = await applicantService.GetApplicantsList();
+        applicantsList = applicantsList.Where(app => app.AccountStatus.Equals(AccountStatus.PENDING)).Select(app => app);
     }
 
-    public void testfunction(string parameter)
+    public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long tellerId)
     {
-
-        Console.WriteLine("jkdjfdsjkfjkdkjfjksdf");
-        string url = parameter + "ABC";
-
-    }
-    public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long? tellerId)
-    {
-        await this._httpClientService.UpdateApplicantStatus(applicantId, accountStatus, tellerId);
+        await tellerService.UpdateApplicantStatusAsync(applicantId, accountStatus, tellerId);
     }
 
 }
