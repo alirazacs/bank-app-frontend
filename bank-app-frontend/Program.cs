@@ -1,3 +1,4 @@
+using bank;
 using bank_app_frontend.Components;
 using Services;
 
@@ -8,7 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient<HttpClientService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7087/");
+    client.BaseAddress = new Uri(AppRoutes.SERVER_CONNECTION_STRING);
 });
 
 var app = builder.Build();

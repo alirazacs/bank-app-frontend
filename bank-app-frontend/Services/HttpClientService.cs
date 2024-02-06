@@ -13,13 +13,13 @@ namespace Services
 
         public async  Task<IEnumerable<Applicant>> GetApplicants()
         {
-            return await _httpClient.GetFromJsonAsync<List<Applicant>>($"{AppRoutes.SERVER_CONNECTION_STRING}{AppRoutes.GET_ALL_APPLICANTS}");
+            return await _httpClient.GetFromJsonAsync<List<Applicant>>($"{AppRoutes.GET_ALL_APPLICANTS}");
         }
 
         public async Task UpdateApplicantStatus(long applicantId,AccountStatus accountStatus,long? tellerId)
         {
-            var data = new { applicantId = applicantId, accountStatus= accountStatus,tellerId= tellerId };
-            await _httpClient.PutAsJsonAsync($"{AppRoutes.SERVER_CONNECTION_STRING}{AppRoutes.CHANGE_TELLER_STATUS}", data);
+            var data = new { applicantId = applicantId, accountStatus= (int) accountStatus,tellerId= tellerId };
+            await _httpClient.PutAsJsonAsync($"{AppRoutes.CHANGE_TELLER_STATUS}", data);
         }
 
 
