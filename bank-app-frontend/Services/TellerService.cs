@@ -13,7 +13,7 @@ namespace Services
         public async Task UpdateApplicantStatusAsync(long applicantId, AccountStatus accountStatus, long tellerId)
         {
             string endPointUrl = $"{AppRoutes.CHANGE_TELLER_STATUS}/{applicantId}";
-            await httpClientService.PutDataRequest<object, object>(endPointUrl, new { AccountStatus = accountStatus, TellerId = tellerId });
+            await httpClientService.PutDataRequest<object, Applicant>(endPointUrl, new { AccountStatus = accountStatus, TellerId = tellerId }, typeof(Applicant));
         }
     }
 }
