@@ -12,7 +12,7 @@ namespace Services
 
         public async Task<List<Applicant>> GetApplicantsList()
         {
-            string endPointUrl = AppRoutes.GET_ALL_APPLICANTS;
+            string endPointUrl = AppRoutes.APPLICANTS;
             var applicants = await httpClientService.SendGetRequest< List<Applicant>>(endPointUrl, typeof(List<Applicant>));
             return applicants;
         }
@@ -27,8 +27,14 @@ namespace Services
 
         public async Task UpdateApplicantList(string ApplicateName, string Address, string CNIC, String DOB, string Email, long? TellerId, AccountType AccountType, AccountStatus AccountStatus)
         {
-            string endPointUrl = $"{AppRoutes.POST_APPLICANT}";
+            string endPointUrl = $"{AppRoutes.APPLICANTS}";
             await httpClientService.PostDataRequest<object, object>(endPointUrl, new { id = 0, applicateName = ApplicateName, address = Address, cnic = CNIC, email = Email, dob = DOB, accountType = 0, accountStatus = 0, tellerId = TellerId }, typeof(object));
+        }
+
+        public async Task<Applicant> GetApplicantById(long applicantId)
+        {
+            string endPointUrl = $"{AppRoutes.APPLICANTS}/{applicantId}";
+            return await httpClientService.SendGetRequest<Applicant>(endPointUrl, typeof(Applicant));
         }
     }
 }

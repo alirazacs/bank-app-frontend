@@ -1,4 +1,6 @@
 ﻿using bank;
+using BlazorBootstrap;
+using Microsoft.AspNetCore.Components;
 using Models;
 using Newtonsoft.Json;
 using System.Net.Http;
@@ -11,10 +13,12 @@ namespace Services
     public class HttpClientService
     {
         private readonly HttpClient _httpClient;
+        private ToastService toastService;
 
-        public HttpClientService(HttpClient httpClient)
+        public HttpClientService(HttpClient httpClient, ToastService toastService)
         {
             this._httpClient = httpClient;
+            this.toastService = toastService;
         }
 
         public async Task<TResponse> SendGetRequest<TResponse>(string endPointUrl, Type responseType) where TResponse : class
@@ -24,6 +28,7 @@ namespace Services
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, endPointUrl);
                 request.Headers.Add("Accept", "application/json");
 
+                toastService.Notify(new(ToastType.Success, $"Employee details saved successfully."));
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
 
                 if (response.IsSuccessStatusCode)

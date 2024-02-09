@@ -1,5 +1,6 @@
 using bank;
 using bank_app_frontend.Components;
+using BlazorBootstrap;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +13,11 @@ builder.Services.AddHttpClient<HttpClientService>(client =>
 {
     client.BaseAddress = new Uri(AppRoutes.SERVER_CONNECTION_STRING);
 });
-
-builder.Services.AddSingleton<ApplicantService>();
-builder.Services.AddSingleton<TellerService>();
-
+builder.Services.AddScoped<ApplicantService>();
+builder.Services.AddScoped<TellerService>();
+builder.Services.AddScoped<CustomerService>();
+// Register ToastService with the appropriate scope
+builder.Services.AddScoped<ToastService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -2,84 +2,111 @@
 @layout ApplicationFormLayout;
 @using bank_app_frontend.Components.Layout;
 @using Models;
+@using Services
+@inject ApplicantService applicantService;
+@inject CustomerService customerService;
+@inject NavigationManager navigationManager
 <Toasts class="p-3" Messages="messages" AutoHide="true" Delay="6000" Placement="ToastsPlacement.TopCenter" />
 <div class="container mt-5">
     <h3 class="text-center text-white">Customer Registeration Form</h3>
-    <div class="mt-5 d-flex justify-content-center">
 
-        <div class="col-md-6 shadow bg-white rounded">
-
-            <form class="mb-3" @onsubmit="SubmitData">
-
-                <div class="form-group row m-2">
-                    <label for="customerName" class="col col-sm-4 text-center col-form-label">Name:</label>
-                    <div class="col col-sm-8">
-                        <label class="col-form-label">ABDEFGGH</label>
-                    </div>
-                </div>
-                <div class="form-group row m-2">
-                    <label for="customerCNIC" class="col col-sm-4 text-center col-form-label">CNIC:</label>
-                    <div class="col col-sm-8">
-                        <label class="col-form-label">ABDEFGGH42342342</label>
-                    </div>
-                </div>
-
-                <div class="form-group row m-2">
-                    <label for="customerAddress" class="col col-sm-4 text-center col-form-label"> Address:</label>
-                    <div class="col col-sm-8">
-                        <label class="col-form-label">ABDEFGGHffsf FSD</label>
-                    </div>
-                </div>
-
-                <div class="form-group row m-2">
-                    <label for="userName" class="col col-sm-4 text-center col-form-label">User Name:</label>
-                    <div class="col col-sm-8">
-                        <input type="text" class="form-control" placeholder="User Name" required minlength="3" maxlength="10" @bind-value="customer.UserName">
-                    </div>
-                </div>
-
-                <div class="form-group row m-2">
-                    <label for="inputPassword" class="col col-sm-4 text-center col-form-label">Password:</label>
-                    <div class="col col-sm-8">
-                        <input type="password" class="form-control" id="inputPassword" placeholder="Password" required minlength="5" maxlength="15" @bind-value="customer.Password">
-                    </div>
-                </div>
-
-                <div class="form-group row m-2">
-                    <label for="inputPassword" class="col col-sm-4 text-center col-form-label">Confirm Password:</label>
-                    <div class="col col-sm-8">
-                        <input type="password" class="form-control" id="inputPassword" placeholder="Confirm Password" required minlength="5" maxlength="15" @bind-value="confirmPassword">
-                    </div>
-                </div>
-
-                <div class="mt-2 text-center">
-                    <button type="submit" class="btn btn-primary">Enter details</button>
-                </div>
-            </form>
+    @if (isApplicantLoading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only"></span>
+            </div>
         </div>
-    </div>
+    }
+    else if(applicant == null)
+    {
+        <p>Applicant not found</p>
+    }
+    else
+    {
+        <div class="mt-5 d-flex justify-content-center">
+
+            <div class="col-md-6 shadow bg-white rounded">
+
+                <form class="mb-3" @onsubmit="SubmitData">
+
+                    <div class="form-group row m-2">
+                        <label for="customerName" class="col col-sm-4 text-center col-form-label">Name:</label>
+                        <div class="col col-sm-8">
+                            <label class="col-form-label">@applicant?.ApplicateName</label>
+                        </div>
+                    </div>
+                    <div class="form-group row m-2">
+                        <label for="customerCNIC" class="col col-sm-4 text-center col-form-label">CNIC:</label>
+                        <div class="col col-sm-8">
+                            <label class="col-form-label">@applicant?.CNIC</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row m-2">
+                        <label for="customerAddress" class="col col-sm-4 text-center col-form-label"> Address:</label>
+                        <div class="col col-sm-8">
+                            <label class="col-form-label">@applicant?.Address</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row m-2">
+                        <label for="userName" class="col col-sm-4 text-center col-form-label">User Name:</label>
+                        <div class="col col-sm-8">
+                            <input type="text" class="form-control" placeholder="User Name" required minlength="3" maxlength="10" @bind-value="customer.UserName">
+                        </div>
+                    </div>
+
+                    <div class="form-group row m-2">
+                        <label for="inputPassword" class="col col-sm-4 text-center col-form-label">Password:</label>
+                        <div class="col col-sm-8">
+                            <input type="password" class="form-control" id="inputPassword" placeholder="Password" required minlength="5" maxlength="15" @bind-value="customer.Password">
+                        </div>
+                    </div>
+
+                    <div class="form-group row m-2">
+                        <label for="inputPassword" class="col col-sm-4 text-center col-form-label">Confirm Password:</label>
+                        <div class="col col-sm-8">
+                            <input type="password" class="form-control" id="inputPassword" placeholder="Confirm Password" required minlength="5" maxlength="15" @bind-value="confirmPassword">
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary">Enter details</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
 
 </div>
 
 <style>
-    body
-    {
+    body {
         background-color: #7BABF0;
     }
 </style>
 
 
 @code {
-    List<ToastMessage> messages;
-    Customer customer;
-    string confirmPassword;
+    List<ToastMessage> messages = new List<ToastMessage>();
+    public Customer customer = new Customer();
+    public string confirmPassword = string.Empty;
+    public Applicant applicant;
+    public bool isApplicantLoading = false;
+    long applicantId = 5;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // You can initialize or use someComponentRef here
-        messages = new List<ToastMessage>();
-        customer = new Customer();
-        confirmPassword = string.Empty;
+        await base.OnInitializedAsync();
+        await getApplicantData();
+    }
+
+    private async Task getApplicantData()
+    {
+        isApplicantLoading = true;
+        applicant = await applicantService.GetApplicantById(applicantId);
+        isApplicantLoading = false;
     }
     private void ShowMessage(ToastType toastType, string title, string description) => messages.Add(CreateToastMessage(toastType, title, description));
 
@@ -91,11 +118,20 @@
             Message = description,
         };
 
-    public void SubmitData()
+    public async void SubmitData()
     {
-        if(!customer.Password.Equals(confirmPassword))
+        if (!customer.Password.Equals(confirmPassword))
         {
             ShowMessage(ToastType.Warning, "WARNING!", "Passwords do not match");
+        }
+        else
+        {
+            customer.CustomerId = applicant.Customer.CustomerId;
+            Customer updatedCustomer = await customerService.UpdateCustomer(customer);
+            if(updatedCustomer!=null)
+            {
+                navigationManager.NavigateTo("Home"); 
+            }
         }
     }
 
