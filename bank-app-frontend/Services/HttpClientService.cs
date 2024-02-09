@@ -33,6 +33,7 @@ namespace Services
             try
             {
                 var response = await _httpClient.PostAsJsonAsync(endpoint, data);
+                
                 return await response.Content.ReadFromJsonAsync<TResponse>();
             }
             catch (Exception ex)
