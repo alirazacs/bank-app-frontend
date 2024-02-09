@@ -1,12 +1,12 @@
-﻿@page "/customer/register"
+﻿@page "/customer/register/{id}"
 @layout ApplicationFormLayout;
 @using bank_app_frontend.Components.Layout;
 @using Models;
 @using Services
 @inject ApplicantService applicantService;
 @inject CustomerService customerService;
-@inject NavigationManager navigationManager
-<Toasts class="p-3" Messages="messages" AutoHide="true" Delay="6000" Placement="ToastsPlacement.TopCenter" />
+@inject NavigationManager navigationManager;
+@inject ToastMessageService toastMessageService;
 <div class="container mt-5">
     <h3 class="text-center text-white">Customer Registeration Form</h3>
 
@@ -20,7 +20,14 @@
     }
     else if(applicant == null)
     {
-        <p>Applicant not found</p>
+        <div class ="mt-5 d-flex justify-content-center">
+            <Card Style="width:18rem;">
+                <CardBody>
+                    <CardTitle>Applicant Not Found</CardTitle>
+                    <CardText>@notFoundMessage</CardText>
+                </CardBody>
+            </Card>
+       </div>
     }
     else
     {
@@ -72,7 +79,7 @@
                     </div>
 
                     <div class="mt-2 text-center">
-                        <button type="submit" class="btn btn-primary">Enter details</button>
+                        <Button Type="ButtonType.Submit" Color="ButtonColor.Primary">Enter Details</Button>
                     </div>
                 </form>
             </div>
@@ -89,40 +96,46 @@
 
 
 @code {
-    List<ToastMessage> messages = new List<ToastMessage>();
-    public Customer customer = new Customer();
-    public string confirmPassword = string.Empty;
-    public Applicant applicant;
-    public bool isApplicantLoading = false;
-    long applicantId = 5;
+    [Parameter]
+    public string Id { get; set; }
+    private Customer customer = new Customer();
+    private string confirmPassword = string.Empty;
+    private Applicant applicant;
+    private bool isApplicantLoading = false;
+    private string notFoundMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await getApplicantData();
+        if (long.TryParse(Id, out long number))
+        {
+            await getApplicantData();
+        }
+        else
+        {
+            notFoundMessage = $"{Id} is not a number";
+            toastMessageService.ShowToastMessage(ToastType.Warning, "Warning!", $"{Id} is not a number");
+        }
+
     }
 
     private async Task getApplicantData()
     {
         isApplicantLoading = true;
-        applicant = await applicantService.GetApplicantById(applicantId);
+        applicant = await applicantService.GetApplicantById(long.Parse(Id));
         isApplicantLoading = false;
-    }
-    private void ShowMessage(ToastType toastType, string title, string description) => messages.Add(CreateToastMessage(toastType, title, description));
-
-    private ToastMessage CreateToastMessage(ToastType toastType, string title, string description)
-    => new ToastMessage
+        if(applicant == null)
         {
-            Type = toastType,
-            Title = title,
-            Message = description,
-        };
+            notFoundMessage = $"Applicant not found with id: {Id}";
+        }
+    }
 
     public async void SubmitData()
     {
         if (!customer.Password.Equals(confirmPassword))
         {
-            ShowMessage(ToastType.Warning, "WARNING!", "Passwords do not match");
+            //ShowMessage(ToastType.Warning, "WARNING!", "Passwords do not match");
+            toastMessageService.ShowToastMessage(ToastType.Warning, "WARNING!", "Passwords do not match");
         }
         else
         {
@@ -136,3 +149,4 @@
     }
 
 }
+

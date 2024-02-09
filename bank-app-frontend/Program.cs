@@ -18,6 +18,7 @@ builder.Services.AddScoped<TellerService>();
 builder.Services.AddScoped<CustomerService>();
 // Register ToastService with the appropriate scope
 builder.Services.AddScoped<ToastService>();
+builder.Services.AddScoped<ToastMessageService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
