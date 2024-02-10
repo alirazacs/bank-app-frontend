@@ -51,7 +51,7 @@
                 <label for="">Account Status</label>
             </div>
             <div class="input-data">
-                <input type="email" required @bind="applicant.Email">
+                <input type="email" required @bind="applicant.EmailAddress">
                 <div class="underline"></div>
                 <label for="">Email address</label>
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
@@ -77,7 +77,7 @@
 
     private void SubmitForm()
     {
-        UpdateApplicantList(applicant.ApplicateName, applicant.Address, applicant.CNIC, DOB, applicant.Email, applicant.TellerId, applicant.AccountType, applicant.AccountStatus);
+        UpdateApplicantList(applicant.ApplicateName, applicant.Address, applicant.CNIC, DOB, applicant.EmailAddress, applicant.TellerId, applicant.AccountType, applicant.AccountStatus);
         // Form submission logic
 
         // Redirect to the desired page

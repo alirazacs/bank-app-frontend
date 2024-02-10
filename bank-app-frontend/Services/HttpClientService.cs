@@ -27,7 +27,6 @@ namespace Services
             {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, endPointUrl);
                 request.Headers.Add("Accept", "application/json");
-                toastService.ShowToastMessage(ToastType.Success, "SUCCESS!", $"Employee details saved successfully.");
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
                 string responseBody = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
