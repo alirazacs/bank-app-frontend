@@ -36,7 +36,7 @@ else
                     <th class="col-2">Name</th>
                     <th class="col-2">CNIC</th>
                     <th class="col-2">Account Type</th>
-                    <th class="col-2">Operation</th>
+                    <th class="col-3">Operation</th>
                 </tr>
             </thead>
 
@@ -49,14 +49,15 @@ else
                         <td>@applicant.CNIC</td>
                         <td>@applicant.AccountType</td>
                         <td class="text-center">
-                            <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.APPROVED,1)"
-                                    class="btn btn-success @(isApplicantStatusCallLoading ? "disabled" : "")">
+                            <Button Color="ButtonColor.Success" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.APPROVED,1)"
+                                    class="@(isApplicantStatusCallLoading ? "disabled" : "")">
                                 Approve
-                            </button>
-                            <button type="button" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.DENIED,1)"
-                                    class="btn btn-danger @(isApplicantStatusCallLoading ? "disabled" : "")">
+                            </Button>
+                            <Button Color="ButtonColor.Danger" @onclick="()=>UpdateApplicantStatus(applicant.Id,AccountStatus.DENIED,1)"
+                                    class="@(isApplicantStatusCallLoading ? "disabled" : "")">
                                 Reject
-                            </button>
+                            </Button>
+                            <Button Color="ButtonColor.Info" @onclick="() => ShowEmployeeComponent(applicant)">View Details</Button>
                         </td>
                     </tr>
                 }
@@ -64,11 +65,42 @@ else
 
         </table>
     </div>
+
+    <Modal @ref="modal" Title="Applicant Details" IsVerticallyCentered="true">
+        <BodyTemplate>
+            <div class="row">
+                <div class="col-5 col-md-4 text-center">Name:</div>
+                <div class="col-7 col-md-5">@modalApplicant.ApplicateName</div>
+            </div>
+            <div class="row">
+                <div class="col-5 col-md-4 text-center">Email:</div>
+                <div class="col-7 col-md-5">@modalApplicant.EmailAddress</div>
+            </div>
+            <div class="row">
+                <div class="col-5 col-md-4 text-center">CNIC:</div>
+                <div class="col-7 col-md-5">@modalApplicant.CNIC</div>
+            </div>
+            <div class="row">
+                <div class="col-5 col-md-4 text-center">Date of birth:</div>
+                <div class="col-7 col-md-5">@modalApplicant.DOB.ToString("dd/mm/yyyy")</div>
+            </div>
+            <div class="row">
+                <div class="col-5 col-md-4 text-center">Account Type:</div>
+                <div class="col-7 col-md-5">@modalApplicant.AccountType</div>
+            </div>
+            <div class="row">
+                <div class="col-5 col-md-4 text-center">Address:</div>
+                <div class="col-7 col-md-5">@modalApplicant.Address</div>
+            </div>
+        </BodyTemplate>
+    </Modal>
 }
 
 
 @code {
+    public Modal modal = default!;
     IEnumerable<Applicant> applicantsList = null;
+    Applicant modalApplicant = null;
     bool isApplicantsListLoading = false;
     bool isApplicantStatusCallLoading = false;
     protected override async Task OnInitializedAsync()
@@ -92,6 +124,12 @@ else
         await tellerService.UpdateApplicantStatusAsync(applicantId, accountStatus, tellerId);
         await getPendingApplicantsList();
         isApplicantStatusCallLoading = false;
+    }
+
+    private async Task ShowEmployeeComponent(Applicant applicant)
+    {
+        modalApplicant = applicant;
+        await modal.ShowAsync();
     }
 
 }
