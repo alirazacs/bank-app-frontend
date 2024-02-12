@@ -17,6 +17,7 @@ builder.Services.AddHttpClient<HttpClientService>(client =>
 builder.Services.AddScoped<ApplicantService>();
 builder.Services.AddScoped<TellerService>();
 builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<AccountService>();
 // Register ToastService with the appropriate scope
 builder.Services.AddScoped<ToastService>();
 builder.Services.AddScoped<ToastMessageService>();
