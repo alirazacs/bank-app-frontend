@@ -2,6 +2,8 @@
 using Blazored.LocalStorage;
 using Models;
 using Newtonsoft.Json;
+using System.Reflection.Metadata;
+using System;
 
 
 namespace Services
@@ -18,11 +20,23 @@ namespace Services
 
         public async Task<T> LoginUser<T>(User user) where T: class
         {
-
             T userDetails = await httpClientService.PostDataRequest<User, T>(AppRoutes.LOGIN_URL, user, typeof(T));
             if(userDetails != null)
             {
-                await localStorageService.SetItemAsStringAsync("userDetails", JsonConvert.SerializeObject(userDetails));
+                string serializedUserDetails = JsonConvert.SerializeObject(userDetails);
+
+                // Deserialize the JSON string to an object of type T (either Applicant or Teller)
+                T? deserializedUserDetails;
+
+                if (user.UserType.Equals(UserType.CUSTOMER))
+                {
+                    deserializedUserDetails = JsonConvert.DeserializeObject<Applicant>(serializedUserDetails) as T;
+                }
+                else
+                {
+                    deserializedUserDetails = JsonConvert.DeserializeObject<Teller>(serializedUserDetails) as T;
+                }
+                await localStorageService.SetItemAsync<T>("userDetails", deserializedUserDetails);
                 await localStorageService.SetItemAsStringAsync("userType", user.UserType.ToString());
             }
             return userDetails;
