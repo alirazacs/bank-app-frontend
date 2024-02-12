@@ -1,4 +1,4 @@
-﻿@page "/customer/register/{id}"
+﻿@page "/customer/register/{emailAddress}"
 @layout ApplicationFormLayout;
 @using bank_app_frontend.Components.Layout;
 @using Models;
@@ -97,7 +97,7 @@
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public string emailAddress { get; set; }
     private Customer customer = new Customer();
     private string confirmPassword = string.Empty;
     private Applicant applicant;
@@ -107,26 +107,21 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        if (long.TryParse(Id, out long number))
-        {
-            await getApplicantData();
-        }
-        else
-        {
-            notFoundMessage = $"{Id} is not a number";
-            toastMessageService.ShowToastMessage(ToastType.Warning, "Warning!", $"{Id} is not a number");
-        }
-
+        await getApplicantData();
     }
 
     private async Task getApplicantData()
     {
         isApplicantLoading = true;
-        applicant = await applicantService.GetApplicantById(long.Parse(Id));
+        applicant = await applicantService.GetApplicantByEmailAddress(emailAddress);
         isApplicantLoading = false;
-        if(applicant == null)
+        if (applicant == null)
         {
-            notFoundMessage = $"Applicant not found with id: {Id}";
+            notFoundMessage = $"Applicant not found with email: {emailAddress}";
+        }
+        else if (applicant?.Customer.Password != "" || applicant?.Customer.UserName != "")
+        {
+            navigationManager.NavigateTo("Login");
         }
     }
 

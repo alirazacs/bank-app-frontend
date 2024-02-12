@@ -9,5 +9,6 @@
         public static string UPDATE_CUSTOMER = "/api/customer/updateCustomer";
         public static string LOGIN_URL = "/api/User/login";
         public static string CUSTOMER = "/api/customer";
+        public static string APPLICANT_EMAIL = "/api/applicant/email";
     }
 }
