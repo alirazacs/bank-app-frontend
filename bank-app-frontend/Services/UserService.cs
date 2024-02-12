@@ -38,6 +38,7 @@ namespace Services
                 }
                 await localStorageService.SetItemAsync<T>(Constants.USER_DETAIL_LOCAL_STORAGE_KEY, deserializedUserDetails);
                 await localStorageService.SetItemAsStringAsync(Constants.USER_TYPE_LOCAL_STORAGE_KEY, user.UserType.ToString());
+                return deserializedUserDetails;
             }
             return userDetails;
         }

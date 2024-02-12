@@ -4,7 +4,7 @@
 @using bank;
 @using Newtonsoft.Json;
 @inject ILocalStorageService localStorageService;
-@inject NavigationManager navigationManger;
+@inject NavigationManager navigationManager;
 @inject UserService userService;
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -57,7 +57,11 @@
                 </NavLink>
             </div>
         }
-
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="()=>NavigateToLoginPage()">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
+            </NavLink>
+        </div>
 
 
 
@@ -81,7 +85,7 @@
             if (!await localStorageService.ContainKeyAsync(Constants.USER_DETAIL_LOCAL_STORAGE_KEY) &&
             !await localStorageService.ContainKeyAsync(Constants.USER_TYPE_LOCAL_STORAGE_KEY))
             {
-                navigationManger.NavigateTo("/login");
+                navigationManager.NavigateTo("/login");
             }
             else
             {
@@ -98,10 +102,14 @@
                 }
                 StateHasChanged();
             }
-
         }
     }
-
+    private async Task NavigateToLoginPage()
+    {
+        await localStorageService.RemoveItemAsync(Constants.USER_TYPE_LOCAL_STORAGE_KEY);
+        await localStorageService.RemoveItemAsync(Constants.USER_DETAIL_LOCAL_STORAGE_KEY);
+        navigationManager.NavigateTo("login");
+    }
 
 }
 

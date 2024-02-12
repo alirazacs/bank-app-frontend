@@ -58,7 +58,15 @@
         object response = await userService.LoginUser<object>(user);
         if(response!=null)
         {
-            navigationManager.NavigateTo("Dashboard");
+            if(response is Teller)
+            {
+                navigationManager.NavigateTo("teller/approval");
+            }
+            else
+            {
+                navigationManager.NavigateTo("Dashboard");
+            }
+
         }
     }
 
