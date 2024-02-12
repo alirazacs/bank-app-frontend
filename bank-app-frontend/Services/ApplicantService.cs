@@ -25,10 +25,10 @@ namespace Services
             return responseTransaction;
         }
 
-        public async Task UpdateApplicantList(string ApplicateName, string Address, string CNIC, String DOB, string Email, long? TellerId, AccountType AccountType, AccountStatus AccountStatus)
+        public async Task UpdateApplicantList(string ApplicateName, string Address, string CNIC, DateOnly DOB, string Email, int AccountType)
         {
             string endPointUrl = $"{AppRoutes.APPLICANTS}";
-            await httpClientService.PostDataRequest<object, object>(endPointUrl, new { id = 0, applicateName = ApplicateName, address = Address, cnic = CNIC, email = Email, dob = DOB, accountType = 0, accountStatus = 0, tellerId = TellerId }, typeof(object));
+            await httpClientService.PostDataRequest<object, object>(endPointUrl, new { id = 0, applicateName = ApplicateName, address = Address, cnic = CNIC, emailAddress = Email, dob = DOB, accountType = AccountType, accountStatus = 0, tellerId = 5 }, typeof(object));
         }
 
         public async Task<Applicant> GetApplicantById(long applicantId)

@@ -3,6 +3,7 @@
 @using Models
 @using Services
 @using bank_app_frontend.Components.Layout
+@using MudBlazor
 @inject ApplicantService applicantService;
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
@@ -26,37 +27,35 @@
         </div>
         <div class="form-row">
             <div class="input-data">
-                <input type="text" required @bind="applicant.CNIC">
-                <div class="underline"></div>
-                <label for="">CNIC</label>
-            </div>
-            <div class="input-data">
-                <input type="text" required @bind="DOB">
-                <div class="underline"></div>
-                <label for="">Date Of Birth</label>
-            </div>
-            <div class="input-data">
-                <input type="text" required @bind="applicant.TellerId">
-                <div class="underline"></div>
-                <label for="">TellerId</label>
-            </div>
-            <div class="input-data">
-                <input type="text" required @bind="applicant.AccountType">
-                <div class="underline"></div>
-                <label for="">Account Type</label>
-            </div>
-            <div class="input-data">
-                <input type="text" required @bind="applicant.AccountStatus">
-                <div class="underline"></div>
-                <label for="">Account Status</label>
-            </div>
-            <div class="input-data">
                 <input type="email" required @bind="applicant.EmailAddress">
                 <div class="underline"></div>
                 <label for="">Email address</label>
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
+            <div class="input-data">
+                <input type="text" required @bind="applicant.CNIC">
+                <div class="underline"></div>
+                <label for="">CNIC</label>
+            </div>
         </div>
+        <div class="form-row">
+            <div class="input-data">
+                <label class="data" for="">Date Of Birth</label>
+                <InputDate  @bind-Value="@applicant.DOB" />
+            </div>
+            <div class="input-data">
+                <label class="data" for="">Account Type</label>
+                <InputSelect TValue="AccountType" @bind-Value="applicant.AccountType">
+                    @foreach (AccountType type in Enum.GetValues(typeof(AccountType)))
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+    
+       
+ 
         <div class="form-row">
             <div class="input-data textarea">
                 <div class="form-row submit-btn">
@@ -73,11 +72,26 @@
 @code
 {
     Applicant applicant = new Applicant();
+    DateTime? selectedDate;
+
     String DOB;
 
     private void SubmitForm()
     {
-        UpdateApplicantList(applicant.ApplicateName, applicant.Address, applicant.CNIC, DOB, applicant.EmailAddress, applicant.TellerId, applicant.AccountType, applicant.AccountStatus);
+        int accountType;
+        if (applicant.AccountType == AccountType.CURRENT)
+        {
+            accountType = 0;
+        }
+        else if (applicant.AccountType == AccountType.SAVING)
+        {
+            accountType = 1;
+        }
+        else
+        {
+            accountType = 2;
+        }
+        UpdateApplicantList(applicant.ApplicateName, applicant.Address, applicant.CNIC, applicant.DOB, applicant.EmailAddress, accountType);
         // Form submission logic
 
         // Redirect to the desired page
@@ -85,9 +99,9 @@
 
     }
 
-    public async Task UpdateApplicantList(string ApplicateName, string Address, string CNIC, String DOB, string Email, long? TellerId, AccountType AccountType, AccountStatus AccountStatus)
+    public async Task UpdateApplicantList(string ApplicateName, string Address, string CNIC, DateOnly DOB, string Email, int AccountType)
     {
-        await applicantService.UpdateApplicantList(ApplicateName, Address, CNIC, DOB, Email, TellerId, AccountType, AccountStatus);
+        await applicantService.UpdateApplicantList(ApplicateName, Address, CNIC, DOB, Email, AccountType);
 
     }
 }

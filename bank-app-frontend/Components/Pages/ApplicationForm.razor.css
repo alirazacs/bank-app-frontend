@@ -15,8 +15,17 @@ body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(115deg, #56d8e4 10%, #9f01ea 90%);
 }
-
-
+.data {
+    padding-bottom:30px
+}
+.cen
+{
+    margin-top:15px
+}
+.form-row
+{
+    padding-top:20px;
+}
 .container {
     max-width: 800px;
     background: #fff;

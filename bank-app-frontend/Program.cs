@@ -3,6 +3,7 @@ using bank_app_frontend.Components;
 using BlazorBootstrap;
 using Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddBlazorBootstrap();
