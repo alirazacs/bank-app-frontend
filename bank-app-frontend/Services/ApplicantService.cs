@@ -36,5 +36,11 @@ namespace Services
             string endPointUrl = $"{AppRoutes.APPLICANTS}/{applicantId}";
             return await httpClientService.SendGetRequest<Applicant>(endPointUrl, typeof(Applicant));
         }
+
+        public async Task<Applicant> GetApplicantByEmailAddress(string emailAddress)
+        {
+            string endPointUrl = $"{AppRoutes.APPLICANT_EMAIL}/{emailAddress}";
+            return await httpClientService.SendGetRequest<Applicant>(endPointUrl, typeof(Applicant));
+        }
     }
 }

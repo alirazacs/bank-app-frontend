@@ -15,5 +15,10 @@ namespace Services
             string endPointUrl = AppRoutes.UPDATE_CUSTOMER;
             return await httpClientService.PutDataRequest<Customer, Customer>(endPointUrl, customer, typeof(Customer));
         }
+        public async Task<Account> GetAccountByCustomerId(long customerId)
+        {
+            string endPointUrl = $"{AppRoutes.CUSTOMER}/customerAccount/{customerId}";
+            return await httpClientService.SendGetRequest<Account>(endPointUrl, typeof(Account));
+        }
     }
 }
