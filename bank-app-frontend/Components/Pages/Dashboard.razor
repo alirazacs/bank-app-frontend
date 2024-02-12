@@ -1,21 +1,24 @@
 ﻿@page "/Dashboard"
 @using Models
 @using Services
-@rendermode InteractiveServer
 @inject CustomerService customerService;
 @inject AccountService accountService;
+@inject UserService userService;
+
 <PageTitle>Dashboard</PageTitle>
 
 <h2>Dashboard</h2>
 
-<Card Color="CardColor.Primary" Class="mb-4 text-center" Style="width:30rem;">
-    <CardBody>
-        <CardTitle class="text-dark">@applicant.ApplicateName?.ToUpper()</CardTitle>
-            <CardText class="text-warning">Rs.@account.Balance</CardText>
-        <CardText >@account.AccountType - @account.AccountId</CardText>
-            <CardText>@applicant.Address</CardText>
-    </CardBody>
-</Card>
+<div class="d-flex justify-content-center">
+    <Card Color="CardColor.Primary" Class="mb-4 text-center" Style="width:30rem;">
+        <CardBody>
+            <CardTitle class="text-dark">@applicant.ApplicateName?.ToUpper()</CardTitle>
+                <CardText class="text-warning">Rs.@account.Balance</CardText>
+                <CardText>@account.AccountType - @account.AccountId</CardText>
+                <CardText>@applicant.Address</CardText>
+            </CardBody>
+        </Card>
+    </div>
 @if (transactions != null)
 {
     <div class="p-4 m-4">
@@ -47,7 +50,7 @@
 }
 
 @code
-    {
+{
     Account account = new Account();
     Customer customer = new Customer();
     Applicant applicant = new Applicant();
@@ -56,12 +59,16 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await getAccountDetails();
-
     }
+
+    public async Task ReadLocalStorage()
+    {
+        applicant = await userService.GetCustomerDetailFromLocalStorage(); 
+    }
+
     private async Task getAccountDetails()
     {
-        account = await this.customerService.GetAccountByCustomerId(1);
+        account = await this.customerService.GetAccountByCustomerId(applicant.Customer.CustomerId);
         await getAccountTransactions(account.AccountId);
         customer = account.Customer;
         applicant = customer.Applicant;
@@ -73,6 +80,11 @@
     }
 
 
-
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        applicant = await userService.GetCustomerDetailFromLocalStorage();
+        await getAccountDetails();
+        StateHasChanged();
+    }
     
 }

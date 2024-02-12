@@ -42,9 +42,9 @@ namespace Services
             return userDetails;
         }
 
-        public T ParseDataInCustomObject<T>(string data, Type type)
+        public async Task<Applicant> GetCustomerDetailFromLocalStorage()
         {
-            return (T)JsonConvert.DeserializeObject(data, type);
+            return await localStorageService.GetItemAsync<Applicant>(Constants.USER_DETAIL_LOCAL_STORAGE_KEY);
         }
     }
 }

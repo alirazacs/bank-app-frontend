@@ -78,10 +78,7 @@
     private void SubmitForm()
     {
         UpdateApplicantList(applicant.ApplicateName, applicant.Address, applicant.CNIC, DOB, applicant.EmailAddress, applicant.TellerId, applicant.AccountType, applicant.AccountStatus);
-        // Form submission logic
-
-        // Redirect to the desired page
-        NavigationManager.NavigateTo("Home"); // Change "/submitted" to the desired route
+        NavigationManager.NavigateTo("Login"); // Change "/submitted" to the desired route
 
     }
 

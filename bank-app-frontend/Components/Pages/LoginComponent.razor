@@ -58,7 +58,7 @@
         object response = await userService.LoginUser<object>(user);
         if(response!=null)
         {
-            navigationManager.NavigateTo("Home");
+            navigationManager.NavigateTo("Dashboard");
         }
     }
 
