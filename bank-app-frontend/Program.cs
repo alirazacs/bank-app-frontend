@@ -1,6 +1,7 @@
 using bank;
 using bank_app_frontend.Components;
 using BlazorBootstrap;
+using Blazored.LocalStorage;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,8 @@ builder.Services.AddScoped<CustomerService>();
 // Register ToastService with the appropriate scope
 builder.Services.AddScoped<ToastService>();
 builder.Services.AddScoped<ToastMessageService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddBlazoredLocalStorage();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

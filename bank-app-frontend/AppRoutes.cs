@@ -7,5 +7,6 @@
         public static string CHANGE_TELLER_STATUS = "/api/teller/changeStatus";
         public static string TRANSACTION = "/api/transaction";
         public static string UPDATE_CUSTOMER = "/api/customer/updateCustomer";
+        public static string LOGIN_URL = "/api/User/login";
     }
 }
