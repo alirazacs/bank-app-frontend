@@ -36,10 +36,15 @@ namespace Services
                 {
                     deserializedUserDetails = JsonConvert.DeserializeObject<Teller>(serializedUserDetails) as T;
                 }
-                await localStorageService.SetItemAsync<T>("userDetails", deserializedUserDetails);
-                await localStorageService.SetItemAsStringAsync("userType", user.UserType.ToString());
+                await localStorageService.SetItemAsync<T>(Constants.USER_DETAIL_LOCAL_STORAGE_KEY, deserializedUserDetails);
+                await localStorageService.SetItemAsStringAsync(Constants.USER_TYPE_LOCAL_STORAGE_KEY, user.UserType.ToString());
             }
             return userDetails;
+        }
+
+        public T ParseDataInCustomObject<T>(string data, Type type)
+        {
+            return (T)JsonConvert.DeserializeObject(data, type);
         }
     }
 }

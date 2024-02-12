@@ -1,6 +1,14 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Models;
+@using Services;
+@using Blazored.LocalStorage;
+@using bank;
+@using Newtonsoft.Json;
+@inject ILocalStorageService localStorageService;
+@inject NavigationManager navigationManger;
+@inject UserService userService;
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">bank-app-frontend</a>
+        <a class="navbar-brand">bank-app-frontend</a>
     </div>
 </div>
 
@@ -14,33 +22,73 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
+        @if (userType == UserType.TELLER)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="teller/approval">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Applicants
+                </NavLink>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="customer/detail">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Detail
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="customer/transaction">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Transaction
+                </NavLink>
+            </div>
+        }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="approval">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Applicants
-            </NavLink>
-        </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="userDetail">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> User Detail
-            </NavLink>
-        </div>
+
 
     </nav>
 </div>
 @code {
+    object userDetails;
+    UserType userType;
+    Applicant applicantDetails;
+    Teller tellerDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (!await localStorageService.ContainKeyAsync(Constants.USER_DETAIL_LOCAL_STORAGE_KEY) &&
+            !await localStorageService.ContainKeyAsync(Constants.USER_TYPE_LOCAL_STORAGE_KEY))
+            {
+                navigationManger.NavigateTo("/login");
+            }
+            else
+            {
+                string userTypeResponse = await localStorageService.GetItemAsStringAsync(Constants.USER_TYPE_LOCAL_STORAGE_KEY);
+                userDetails = await localStorageService.GetItemAsync<object>(Constants.USER_DETAIL_LOCAL_STORAGE_KEY);
+                userType = userTypeResponse == UserType.CUSTOMER.ToString() ? UserType.CUSTOMER : UserType.TELLER;
+                if (userType.Equals(UserType.CUSTOMER))
+                {
+                    applicantDetails = JsonConvert.DeserializeObject<Applicant>(userDetails.ToString());
+                }
+                else
+                {
+                    tellerDetails = JsonConvert.DeserializeObject<Teller>(userDetails.ToString());
+                }
+                StateHasChanged();
+            }
+
+        }
+    }
+
 
 }
 
