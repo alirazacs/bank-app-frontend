@@ -8,7 +8,7 @@
 @inject UserService userService;
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand">bank-app-frontend</a>
+        <a class="navbar-brand">Banking App</a>
     </div>
 </div>
 
@@ -22,7 +22,7 @@
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link">
-                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Name:
+                     Logged in User:
                     @(userType == UserType.TELLER ? tellerDetails?.Name : applicantDetails?.ApplicateName)
                 </NavLink>
             </div>
