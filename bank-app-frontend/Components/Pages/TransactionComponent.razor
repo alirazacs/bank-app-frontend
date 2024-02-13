@@ -2,7 +2,9 @@
 @using Models;
 @using Services;
 @inject ApplicantService applicantService;
-@rendermode InteractiveServer
+@inject UserService userService;
+@inject CustomerService customerService;
+@inject NavigationManager navigationManager;
 
 <h3>Transaction</h3>
 @if (isTransactionInProgress)
@@ -74,6 +76,8 @@
     bool isTransactionInProgress = false;
     public TransactionExtended transaction;
     bool showDepositorDiv = false;
+    Applicant applicantDetails;
+    Account accountDetails;
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync(); 
@@ -82,14 +86,21 @@
         transaction.DepositorAccountId = Guid.Empty;
         showDepositorDiv = false;
         isTransactionInProgress = false;
+        applicantDetails = await userService.GetCustomerDetailFromLocalStorage();
+        accountDetails = await this.customerService.GetAccountByCustomerId(applicantDetails.Customer.CustomerId);
+        transaction.AccountId = accountDetails.AccountId;
     }
 
     public async Task submitData()
     {
         isTransactionInProgress = true;
         var response = await applicantService.AddTransaction(transaction);
-
         isTransactionInProgress = false;
+        if(response!=null)
+        {
+            navigationManager.NavigateTo("Dashboard");
+        }
+
     }
 
     public void OnChangeValue(ChangeEventArgs changeEventArgs)

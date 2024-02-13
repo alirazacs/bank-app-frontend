@@ -61,11 +61,6 @@
         await base.OnInitializedAsync();
     }
 
-    public async Task ReadLocalStorage()
-    {
-        applicant = await userService.GetCustomerDetailFromLocalStorage(); 
-    }
-
     private async Task getAccountDetails()
     {
         account = await this.customerService.GetAccountByCustomerId(applicant.Customer.CustomerId);
@@ -82,9 +77,12 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        applicant = await userService.GetCustomerDetailFromLocalStorage();
-        await getAccountDetails();
-        StateHasChanged();
+        if(firstRender)
+        {
+            applicant = await userService.GetCustomerDetailFromLocalStorage();
+            await getAccountDetails();
+            StateHasChanged();
+        }
     }
     
 }
