@@ -1,9 +1,8 @@
 ﻿@page "/teller/approval"
-@using Models
-@using Services
+@using Models;
+@using Services;
 @inject TellerService tellerService;
 @inject ApplicantService applicantService;
-@rendermode InteractiveServer
 <h3 class="text-center">Account Opening Requests</h3>
 @if (isApplicantsListLoading)
 {
@@ -57,7 +56,10 @@ else
                                     class="@(isApplicantStatusCallLoading ? "disabled" : "")">
                                 Reject
                             </Button>
-                            <Button Color="ButtonColor.Info" @onclick="() => ShowEmployeeComponent(applicant)">View Details</Button>
+                            <Button Color="ButtonColor.Info" @onclick="() => ShowEmployeeComponent(applicant)"
+                                    class="@(isApplicantStatusCallLoading ? "disabled" : "")">
+                                View Details
+                            </Button>
                         </td>
                     </tr>
                 }
@@ -82,7 +84,7 @@ else
             </div>
             <div class="row">
                 <div class="col-5 col-md-4 text-center">Date of birth:</div>
-                <div class="col-7 col-md-5">@modalApplicant.DOB.ToString("dd/mm/yyyy")</div>
+                <div class="col-7 col-md-5">@modalApplicant.DOB</div>
             </div>
             <div class="row">
                 <div class="col-5 col-md-4 text-center">Account Type:</div>
